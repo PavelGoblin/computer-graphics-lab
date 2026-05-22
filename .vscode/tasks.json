@@ -1,0 +1,45 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile & Run (F5)",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-o", "${fileBasenameNoExtension}.exe",
+                "${file}",
+                "-I", "${workspaceFolder}/include",
+                "-L", "${workspaceFolder}/include",
+                "-lbgi", "-lgdi32", "-lcomdlg32", "-luuid", "-loleaut32", "-lole32"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "label": "Run Experiment (Ctrl+F5)",
+            "type": "shell",
+            "command": "${fileBasenameNoExtension}.exe",
+            "dependsOn": ["Compile & Run (F5)"],
+            "problemMatcher": [],
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "label": "Compile All Experiments",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}/menu.ps1"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

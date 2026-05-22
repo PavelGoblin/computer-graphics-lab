@@ -3,17 +3,18 @@
 *.o
 *.obj
 
-# IDE/Editor files
+# IDE/Editor files - user-specific only
 *.cbp
 *.layout
 *.depend
 *.user
 *.suo
 .vs/
-.vscode/
+.vscode/*.sublime*
 .idea/
 *.swp
 *.swo
+*.code-workspace
 
 # Build directories
 bin/
