@@ -48,6 +48,10 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Bresenham Line Algorithm (Integer Arithmetic)")
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 500)
+    ax.set_ylim(-50, 400)
 
     colors = plt.cm.tab10.colors
     all_pixels = []

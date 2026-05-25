@@ -45,17 +45,23 @@ void drawAxes() {
     setcolor(LIGHTGRAY);
     setlinestyle(SOLID_LINE, 0, NORM_WIDTH);
 
-    // X-axis
-    line(ox, oy, w - 20, oy);
+    // X-axis (both directions)
+    line(20, oy, w - 20, oy);
     line(w - 20, oy, w - 30, oy - 5);
     line(w - 20, oy, w - 30, oy + 5);
-    outtextxy(w - 30, oy + 8, "X");
+    line(20, oy, 30, oy - 5);
+    line(20, oy, 30, oy + 5);
+    outtextxy(w - 30, oy + 8, "+X");
+    outtextxy(10, oy - 12, "-X");
 
-    // Y-axis
-    line(ox, oy, ox, 20);
+    // Y-axis (both directions)
+    line(ox, 20, ox, h - 20);
     line(ox, 20, ox - 5, 30);
     line(ox, 20, ox + 5, 30);
-    outtextxy(ox - 10, 10, "Y");
+    line(ox, h - 20, ox - 5, h - 30);
+    line(ox, h - 20, ox + 5, h - 30);
+    outtextxy(ox - 15, 10, "+Y");
+    outtextxy(ox - 15, h - 30, "-Y");
 
     // Origin
     outtextxy(ox - 20, oy + 5, "O");
@@ -63,19 +69,33 @@ void drawAxes() {
     // Tick marks
     setcolor(DARKGRAY);
     for (int i = 1; i <= 10; i++) {
-        int x = ox + i * 50;
-        int y = oy - i * 50;
-        if (x <= w - 20) {
-            line(x, oy - 3, x, oy + 3);
+        int xp = ox + i * 50;
+        int xn = ox - i * 50;
+        int yp = oy - i * 50;
+        int yn = oy + i * 50;
+        if (xp <= w - 20) {
+            line(xp, oy - 3, xp, oy + 3);
             char buf[10];
             sprintf(buf, "%d", i * 50);
-            outtextxy(x - 8, oy + 6, buf);
+            outtextxy(xp - 8, oy + 6, buf);
         }
-        if (y >= 20) {
-            line(ox - 3, y, ox + 3, y);
+        if (xn >= 20) {
+            line(xn, oy - 3, xn, oy + 3);
+            char buf[10];
+            sprintf(buf, "-%d", i * 50);
+            outtextxy(xn - 12, oy + 6, buf);
+        }
+        if (yp >= 20) {
+            line(ox - 3, yp, ox + 3, yp);
             char buf[10];
             sprintf(buf, "%d", i * 50);
-            outtextxy(ox - 35, y - 5, buf);
+            outtextxy(ox - 35, yp - 5, buf);
+        }
+        if (yn <= h - 20) {
+            line(ox - 3, yn, ox + 3, yn);
+            char buf[10];
+            sprintf(buf, "-%d", i * 50);
+            outtextxy(ox - 40, yn - 5, buf);
         }
     }
 }

@@ -25,6 +25,10 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("DDA Line Algorithm: Digital Differential Analyzer")
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 450)
+    ax.set_ylim(-50, 350)
 
     xs, ys = zip(*pixels)
     ax.scatter(xs, ys, c="yellow", s=30, label="DDA Pixels", zorder=3)

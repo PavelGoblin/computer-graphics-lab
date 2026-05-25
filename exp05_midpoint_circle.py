@@ -30,8 +30,10 @@ def midpoint_circle(xc, yc, r):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Midpoint Circle Algorithm (Bresenham's Circle)")
-    ax.set_xlim(100, 500)
-    ax.set_ylim(0, 400)
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 550)
+    ax.set_ylim(-50, 450)
     ax.set_aspect("equal")
     ax.grid(True, alpha=0.3)
 

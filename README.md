@@ -142,6 +142,10 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Slope-Intercept: y = mx + c")
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 450)
+    ax.set_ylim(-50, 350)
 
     xs, ys = zip(*pixels)
     ax.scatter(xs, ys, c="yellow", s=30, label="Line pixels", zorder=3)
@@ -275,6 +279,10 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("DDA Line Algorithm: Digital Differential Analyzer")
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 450)
+    ax.set_ylim(-50, 350)
 
     xs, ys = zip(*pixels)
     ax.scatter(xs, ys, c="yellow", s=30, label="DDA Pixels", zorder=3)
@@ -460,6 +468,10 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Bresenham Line Algorithm (Integer Arithmetic)")
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 500)
+    ax.set_ylim(-50, 400)
 
     colors = plt.cm.tab10.colors
     for i, (x1, y1, x2, y2) in enumerate(endpoints):
@@ -604,8 +616,10 @@ def midpoint_circle(xc, yc, r):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Midpoint Circle Algorithm (Bresenham's Circle)")
-    ax.set_xlim(100, 500)
-    ax.set_ylim(0, 400)
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 550)
+    ax.set_ylim(-50, 450)
     ax.set_aspect("equal")
     ax.grid(True, alpha=0.3)
 
@@ -697,7 +711,9 @@ def run():
 
     # ---- Part 1: Translate a LINE ----
     ax1.set_title("2D Translation: Line")
-    ax1.set_xlim(0, 420); ax1.set_ylim(0, 300)
+    ax1.axhline(0, color='white', linewidth=0.8)
+    ax1.axvline(0, color='white', linewidth=0.8)
+    ax1.set_xlim(-50, 350); ax1.set_ylim(-50, 280)
     ax1.set_aspect("equal"); ax1.grid(True, alpha=0.3)
 
     lx1, ly1 = 50, 50
@@ -714,7 +730,9 @@ def run():
 
     # ---- Part 2: Translate a TRIANGLE ----
     ax2.set_title("2D Translation: Triangle")
-    ax2.set_xlim(150, 600); ax2.set_ylim(0, 350)
+    ax2.axhline(0, color='white', linewidth=0.8)
+    ax2.axvline(0, color='white', linewidth=0.8)
+    ax2.set_xlim(-50, 600); ax2.set_ylim(-50, 350)
     ax2.set_aspect("equal"); ax2.grid(True, alpha=0.3)
 
     x1, y1 = 300, 200
@@ -836,7 +854,9 @@ def run():
 
     # Part 1: Rotate a LINE
     ax1.set_title("Rotation: Line")
-    ax1.set_xlim(50, 350); ax1.set_ylim(200, 380)
+    ax1.axhline(0, color='white', linewidth=0.8)
+    ax1.axvline(0, color='white', linewidth=0.8)
+    ax1.set_xlim(-50, 300); ax1.set_ylim(-50, 500)
     ax1.set_aspect("equal"); ax1.grid(True, alpha=0.3)
 
     lx1, ly1, lx2, ly2 = 100, 300, 250, 300
@@ -852,7 +872,9 @@ def run():
 
     # Part 2: Rotate a TRIANGLE
     ax2.set_title("Rotation: Triangle")
-    ax2.set_xlim(200, 600); ax2.set_ylim(0, 350)
+    ax2.axhline(0, color='white', linewidth=0.8)
+    ax2.axvline(0, color='white', linewidth=0.8)
+    ax2.set_xlim(-50, 600); ax2.set_ylim(-50, 400)
     ax2.set_aspect("equal"); ax2.grid(True, alpha=0.3)
 
     x1, y1, x2, y2, x3, y3 = 400, 80, 500, 200, 300, 200
@@ -959,7 +981,9 @@ def run():
 
     # Part 1: Scale a RECTANGLE
     ax1.set_title("Scaling: Rectangle")
-    ax1.set_xlim(0, 350); ax1.set_ylim(0, 300)
+    ax1.axhline(0, color='white', linewidth=0.8)
+    ax1.axvline(0, color='white', linewidth=0.8)
+    ax1.set_xlim(-50, 350); ax1.set_ylim(-50, 280)
     ax1.set_aspect("equal"); ax1.grid(True, alpha=0.3)
 
     rx1, ry1, rx2, ry2 = 50, 50, 150, 150
@@ -980,7 +1004,9 @@ def run():
 
     # Part 2: Scale a TRIANGLE
     ax2.set_title("Scaling: Triangle")
-    ax2.set_xlim(150, 600); ax2.set_ylim(0, 400)
+    ax2.axhline(0, color='white', linewidth=0.8)
+    ax2.axvline(0, color='white', linewidth=0.8)
+    ax2.set_xlim(-50, 600); ax2.set_ylim(-50, 450)
     ax2.set_aspect("equal"); ax2.grid(True, alpha=0.3)
 
     x1, y1, x2, y2, x3, y3 = 350, 80, 450, 200, 250, 200
@@ -1209,7 +1235,9 @@ def cohen_sutherland_clip(x1, y1, x2, y2):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Cohen-Sutherland Line Clipping")
-    ax.set_xlim(0, 640); ax.set_ylim(0, 480)
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 650); ax.set_ylim(-50, 500)
     ax.set_aspect("equal"); ax.grid(True, alpha=0.3)
 
     ax.add_patch(mpatches.Rectangle((XMIN, YMIN), XMAX-XMIN, YMAX-YMIN, fill=False, edgecolor="white", linewidth=2, label="Clipping Window"))
@@ -1334,7 +1362,9 @@ def draw_polygon(ax, poly, color, lw=2):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Sutherland-Hodgman Polygon Clipping")
-    ax.set_xlim(0, 640); ax.set_ylim(0, 420)
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 600); ax.set_ylim(-50, 450)
     ax.set_aspect("equal"); ax.grid(True, alpha=0.3)
 
     ax.add_patch(mpatches.Rectangle((XMIN,YMIN), XMAX-XMIN, YMAX-YMIN, fill=False, edgecolor="white", linewidth=2, label="Clipping Window"))
@@ -1446,13 +1476,17 @@ def run():
     fig.suptitle("Bezier Curve (Cubic)", fontsize=13)
 
     ax1.set_title("Bezier Curve 1 - S Shape")
-    ax1.set_xlim(50, 450); ax1.set_ylim(50, 350)
+    ax1.axhline(0, color='white', linewidth=0.8)
+    ax1.axvline(0, color='white', linewidth=0.8)
+    ax1.set_xlim(-50, 450); ax1.set_ylim(-50, 400)
     ax1.set_aspect("equal"); ax1.grid(True, alpha=0.3)
     draw_control_polygon(ax1, [100,200,300,400], [300,100,100,300])
     draw_bezier(ax1, [100,200,300,400], [300,100,100,300])
 
     ax2.set_title("Bezier Curve 2")
-    ax2.set_xlim(50, 550); ax2.set_ylim(200, 450)
+    ax2.axhline(0, color='white', linewidth=0.8)
+    ax2.axvline(0, color='white', linewidth=0.8)
+    ax2.set_xlim(-50, 550); ax2.set_ylim(-50, 500)
     ax2.set_aspect("equal"); ax2.grid(True, alpha=0.3)
     draw_control_polygon(ax2, [100,250,350,500], [400,250,350,400])
     draw_bezier(ax2, [100,250,350,500], [400,250,350,400])
@@ -1553,6 +1587,10 @@ def b_spline_curve(control_x, control_y, steps=50):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("B-Spline Curve (Uniform Cubic)")
+    ax.axhline(0, color='white', linewidth=0.8)
+    ax.axvline(0, color='white', linewidth=0.8)
+    ax.set_xlim(-50, 600)
+    ax.set_ylim(-50, 350)
 
     x = [100, 180, 280, 380, 480, 560]
     y = [200, 80, 300, 80, 300, 200]

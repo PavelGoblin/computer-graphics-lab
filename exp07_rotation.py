@@ -26,8 +26,10 @@ def run():
 
     # ---- Part 1: Rotate a LINE ----
     ax1.set_title("Rotation: Line")
-    ax1.set_xlim(50, 350)
-    ax1.set_ylim(200, 380)
+    ax1.axhline(0, color='white', linewidth=0.8)
+    ax1.axvline(0, color='white', linewidth=0.8)
+    ax1.set_xlim(-50, 300)
+    ax1.set_ylim(-50, 500)
     ax1.set_aspect("equal")
     ax1.grid(True, alpha=0.3)
 
@@ -49,8 +51,10 @@ def run():
 
     # ---- Part 2: Rotate a TRIANGLE ----
     ax2.set_title("Rotation: Triangle")
-    ax2.set_xlim(200, 600)
-    ax2.set_ylim(0, 350)
+    ax2.axhline(0, color='white', linewidth=0.8)
+    ax2.axvline(0, color='white', linewidth=0.8)
+    ax2.set_xlim(-50, 600)
+    ax2.set_ylim(-50, 400)
     ax2.set_aspect("equal")
     ax2.grid(True, alpha=0.3)
 

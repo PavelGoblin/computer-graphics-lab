@@ -39,6 +39,10 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Slope-Intercept: y = mx + c")
+    ax.axhline(0, color='k', linewidth=0.8)
+    ax.axvline(0, color='k', linewidth=0.8)
+    ax.set_xlim(-50, 450)
+    ax.set_ylim(-50, 350)
 
     xs, ys = zip(*pixels)
     ax.scatter(xs, ys, c="yellow", s=30, label="Line pixels", zorder=3)

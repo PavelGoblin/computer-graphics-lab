@@ -36,8 +36,10 @@ def run():
 
     # Curve 1
     ax1.set_title("Bezier Curve 1 - S Shape")
-    ax1.set_xlim(50, 450)
-    ax1.set_ylim(50, 350)
+    ax1.axhline(0, color='white', linewidth=0.8)
+    ax1.axvline(0, color='white', linewidth=0.8)
+    ax1.set_xlim(-50, 450)
+    ax1.set_ylim(-50, 400)
     ax1.set_aspect("equal")
     ax1.grid(True, alpha=0.3)
 
@@ -48,8 +50,10 @@ def run():
 
     # Curve 2
     ax2.set_title("Bezier Curve 2")
-    ax2.set_xlim(50, 550)
-    ax2.set_ylim(200, 450)
+    ax2.axhline(0, color='white', linewidth=0.8)
+    ax2.axvline(0, color='white', linewidth=0.8)
+    ax2.set_xlim(-50, 550)
+    ax2.set_ylim(-50, 500)
     ax2.set_aspect("equal")
     ax2.grid(True, alpha=0.3)
 
