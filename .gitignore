@@ -23,6 +23,10 @@ obj/
 # User files
 cb/
 
+# Python
+__pycache__/
+*.pyc
+
 # OS files
 Thumbs.db
 .DS_Store
