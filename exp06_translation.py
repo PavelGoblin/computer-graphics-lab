@@ -15,8 +15,8 @@ def run():
 
     # ---- Part 1: Translate a LINE ----
     ax1.set_title("2D Translation: Line")
-    ax1.axhline(0, color='white', linewidth=0.8)
-    ax1.axvline(0, color='white', linewidth=0.8)
+    ax1.axhline(0, color='white', linewidth=0.8, alpha=0.3)
+    ax1.axvline(0, color='white', linewidth=0.8, alpha=0.3)
     ax1.set_xlim(-50, 350)
     ax1.set_ylim(-50, 280)
     ax1.set_aspect("equal")
@@ -41,8 +41,8 @@ def run():
 
     # ---- Part 2: Translate a TRIANGLE ----
     ax2.set_title("2D Translation: Triangle")
-    ax2.axhline(0, color='white', linewidth=0.8)
-    ax2.axvline(0, color='white', linewidth=0.8)
+    ax2.axhline(0, color='white', linewidth=0.8, alpha=0.3)
+    ax2.axvline(0, color='white', linewidth=0.8, alpha=0.3)
     ax2.set_xlim(-50, 600)
     ax2.set_ylim(-50, 350)
     ax2.set_aspect("equal")

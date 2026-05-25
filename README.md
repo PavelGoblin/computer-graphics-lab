@@ -142,8 +142,8 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Slope-Intercept: y = mx + c")
-    ax.axhline(0, color='k', linewidth=0.8)
-    ax.axvline(0, color='k', linewidth=0.8)
+    ax.axhline(0, color='gray', linewidth=0.8, alpha=0.5)
+    ax.axvline(0, color='gray', linewidth=0.8, alpha=0.5)
     ax.set_xlim(-50, 450)
     ax.set_ylim(-50, 350)
 
@@ -279,8 +279,8 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("DDA Line Algorithm: Digital Differential Analyzer")
-    ax.axhline(0, color='k', linewidth=0.8)
-    ax.axvline(0, color='k', linewidth=0.8)
+    ax.axhline(0, color='gray', linewidth=0.8, alpha=0.5)
+    ax.axvline(0, color='gray', linewidth=0.8, alpha=0.5)
     ax.set_xlim(-50, 450)
     ax.set_ylim(-50, 350)
 
@@ -468,8 +468,8 @@ def run():
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Bresenham Line Algorithm (Integer Arithmetic)")
-    ax.axhline(0, color='k', linewidth=0.8)
-    ax.axvline(0, color='k', linewidth=0.8)
+    ax.axhline(0, color='gray', linewidth=0.8, alpha=0.5)
+    ax.axvline(0, color='gray', linewidth=0.8, alpha=0.5)
     ax.set_xlim(-50, 500)
     ax.set_ylim(-50, 400)
 
@@ -616,8 +616,8 @@ def midpoint_circle(xc, yc, r):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Midpoint Circle Algorithm (Bresenham's Circle)")
-    ax.axhline(0, color='k', linewidth=0.8)
-    ax.axvline(0, color='k', linewidth=0.8)
+    ax.axhline(0, color='gray', linewidth=0.8, alpha=0.5)
+    ax.axvline(0, color='gray', linewidth=0.8, alpha=0.5)
     ax.set_xlim(-50, 550)
     ax.set_ylim(-50, 450)
     ax.set_aspect("equal")
@@ -1235,8 +1235,8 @@ def cohen_sutherland_clip(x1, y1, x2, y2):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Cohen-Sutherland Line Clipping")
-    ax.axhline(0, color='k', linewidth=0.8)
-    ax.axvline(0, color='k', linewidth=0.8)
+    ax.axhline(0, color='gray', linewidth=0.8, alpha=0.5)
+    ax.axvline(0, color='gray', linewidth=0.8, alpha=0.5)
     ax.set_xlim(-50, 650); ax.set_ylim(-50, 500)
     ax.set_aspect("equal"); ax.grid(True, alpha=0.3)
 
@@ -1362,8 +1362,8 @@ def draw_polygon(ax, poly, color, lw=2):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("Sutherland-Hodgman Polygon Clipping")
-    ax.axhline(0, color='k', linewidth=0.8)
-    ax.axvline(0, color='k', linewidth=0.8)
+    ax.axhline(0, color='gray', linewidth=0.8, alpha=0.5)
+    ax.axvline(0, color='gray', linewidth=0.8, alpha=0.5)
     ax.set_xlim(-50, 600); ax.set_ylim(-50, 450)
     ax.set_aspect("equal"); ax.grid(True, alpha=0.3)
 
@@ -1587,8 +1587,8 @@ def b_spline_curve(control_x, control_y, steps=50):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("B-Spline Curve (Uniform Cubic)")
-    ax.axhline(0, color='white', linewidth=0.8)
-    ax.axvline(0, color='white', linewidth=0.8)
+    ax.axhline(0, color='white', linewidth=0.8, alpha=0.3)
+    ax.axvline(0, color='white', linewidth=0.8, alpha=0.3)
     ax.set_xlim(-50, 600)
     ax.set_ylim(-50, 350)
 

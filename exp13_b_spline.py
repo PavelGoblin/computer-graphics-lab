@@ -30,8 +30,8 @@ def b_spline_curve(control_x, control_y, steps=50):
 def run():
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_title("B-Spline Curve (Uniform Cubic)")
-    ax.axhline(0, color='white', linewidth=0.8)
-    ax.axvline(0, color='white', linewidth=0.8)
+    ax.axhline(0, color='white', linewidth=0.8, alpha=0.3)
+    ax.axvline(0, color='white', linewidth=0.8, alpha=0.3)
     ax.set_xlim(-50, 600)
     ax.set_ylim(-50, 350)
 
