@@ -13,9 +13,15 @@ All experiments implemented in **C++** (WinBGIm) and **Python** (matplotlib).
 .\menu.ps1           # Interactive menu
 
 # ── Python (requires matplotlib) ──
-pip install matplotlib pillow
+pip install matplotlib pillow numpy
 python exp02_slope_intercept.py   # Replace with any exp*.py
 ```
+
+---
+
+## Experiment 1: Input and Output Devices
+
+📄 **Theory only** — [`exp01_io_devices.md`](exp01_io_devices.md)
 
 ---
 
@@ -25,13 +31,76 @@ python exp02_slope_intercept.py   # Replace with any exp*.py
 
 ### Theory
 
-The slope-intercept form of a line: **y = mx + c**
+The slope-intercept form is the most basic way to represent a straight line:
 
-- **m** = slope = (y₂ - y₁) / (x₂ - x₁)
-- **c** = y-intercept = y₁ - m × x₁
+```
+y = m·x + c
+```
 
-If |dx| ≥ |dy|, iterate over x and compute y = round(m·x + c).  
-Otherwise, iterate over y and compute x = round((y - c) / m).
+Where:
+- **m** (slope) = (y₂ − y₁) / (x₂ − x₁) — measures steepness
+- **c** (y-intercept) = y₁ − m·x₁ — where line crosses Y-axis
+
+**How it works for drawing:**
+- If |dx| ≥ |dy| (gentle slope), loop over x and compute y = round(m·x + c)
+- If |dx| < |dy| (steep slope), loop over y and compute x = round((y − c) / m)
+- For vertical lines (dx = 0), just iterate y from y₁ to y₂
+
+### Algorithm
+
+```
+INPUT: (x₁, y₁), (x₂, y₂)
+OUTPUT: Set of pixel coordinates
+
+1. dx = x₂ − x₁, dy = y₂ − y₁
+2. IF dx == 0 (vertical line):
+      FOR y = min(y₁,y₂) TO max(y₁,y₂):
+         PLOT(x₁, y)
+3. ELSE:
+      m = dy / dx
+      c = y₁ − m·x₁
+      IF |dx| ≥ |dy|:
+         FOR x = min(x₁,x₂) TO max(x₁,x₂):
+            y = ROUND(m·x + c)
+            PLOT(x, y)
+      ELSE:
+         FOR y = min(y₁,y₂) TO max(y₁,y₂):
+            x = ROUND((y − c) / m)
+            PLOT(x, y)
+```
+
+### Example
+
+**Points:** A(2, 3), B(8, 11)
+
+```
+dx = 6, dy = 8
+m = 8/6 = 1.333...
+c = 3 − 1.333×2 = 0.334
+
+Since |dx| < |dy| (6 < 8), iterate over y:
+
+ y  |  x = (y − 0.334)/1.333  | round(x) | pixel
+────┼──────────────────────────┼──────────┼───────
+ 3  |  2.0                     |    2     | (2,3)
+ 4  |  2.75                    |    3     | (3,4)
+ 5  |  3.5                     |    4     | (4,5)
+ 6  |  4.25                    |    4     | (4,6)
+ 7  |  5.0                     |    5     | (5,7)
+ 8  |  5.75                    |    6     | (6,8)
+ 9  |  6.5                     |    7     | (7,9)
+10  |  7.25                    |    7     | (7,10)
+11  |  8.0                     |    8     | (8,11)
+```
+
+### Analysis
+
+| Aspect | Rating |
+|--------|--------|
+| Arithmetic | Floating-point (slow on old hardware) |
+| Vertical lines | Requires special case (dx = 0) |
+| Accumulated error | Yes — repeated multiplication drifts |
+| Rounding | Required at each step |
 
 ### Python Code
 
@@ -119,7 +188,64 @@ if __name__ == "__main__":
 
 ### Theory
 
-Digital Differential Analyzer increments both x and y by fractional steps. The number of steps = max(|dx|, |dy|). At each step, x += x_inc, y += y_inc, and we plot round(x), round(y).
+DDA (Digital Differential Analyzer) is an incremental algorithm. Instead of computing y from scratch at each x (which requires multiplication), DDA **adds a small increment** to the previous value.
+
+**Key insight:**
+- If a line has slope m = dy/dx, then for each unit step in x, y changes by m
+- We choose the number of steps = max(|dx|, |dy|) so we take exactly one step per pixel along the dominant axis
+- At each step: x += x_inc, y += y_inc, where x_inc = dx/steps, y_inc = dy/steps
+
+**Why steps = max(|dx|, |dy|)?**
+- If |dx| > |dy|, stepping by 1 in x gives steps = |dx|, and y_inc = dy/dx = m (fractional)
+- If |dy| > |dx|, stepping by 1 in y gives steps = |dy|, and x_inc = dx/dy = 1/m (fractional)
+- This guarantees we never skip pixels — the dominant axis always moves by exactly 1
+
+### Algorithm
+
+```
+INPUT: (x₁, y₁), (x₂, y₂)
+OUTPUT: Set of pixel coordinates
+
+1. dx = x₂ − x₁, dy = y₂ − y₁
+2. steps = max(|dx|, |dy|)
+3. x_inc = dx / steps
+   y_inc = dy / steps
+4. x = x₁, y = y₁
+5. FOR i = 0 TO steps:
+      PLOT(ROUND(x), ROUND(y))
+      x = x + x_inc
+      y = y + y_inc
+```
+
+### Example
+
+**Points:** A(3, 2), B(9, 7)
+
+```
+dx = 6, dy = 5
+steps = max(6, 5) = 6
+x_inc = 6/6 = 1.0
+y_inc = 5/6 = 0.833
+
+Step |   x   |   y   | round(x,y) | pixel
+─────┼───────┼───────┼────────────┼───────
+  0  | 3.000 | 2.000 |   (3, 2)   | (3,2)
+  1  | 4.000 | 2.833 |   (4, 3)   | (4,3)
+  2  | 5.000 | 3.667 |   (5, 4)   | (5,4)
+  3  | 6.000 | 4.500 |   (6, 5)   | (6,5)
+  4  | 7.000 | 5.333 |   (7, 5)   | (7,5)
+  5  | 8.000 | 6.167 |   (8, 6)   | (8,6)
+  6  | 9.000 | 7.000 |   (9, 7)   | (9,7)
+```
+
+### Analysis
+
+| Advantage | Disadvantage |
+|-----------|-------------|
+| Simple to implement | Floating-point arithmetic (slow) |
+| No special cases for slope | Rounding error accumulates over long lines |
+| Works for any slope | Round() needed at every step |
+| No integer overflow | Slower than integer-only algorithms |
 
 ### Python Code
 
@@ -197,7 +323,94 @@ if __name__ == "__main__":
 
 ### Theory
 
-Bresenham's algorithm uses only **integer arithmetic**. A decision parameter `p = 2·dy - dx` determines which pixel is closer to the true line. Works in all 8 octants by tracking direction (sx, sy) and optionally swapping axes for steep slopes.
+Bresenham's algorithm is the **gold standard** for line drawing. It uses **only integer arithmetic** — no floating point, no rounding, no multiplication by slope.
+
+**The Key Insight:**
+At pixel (x, y), the next pixel can be either:
+- **E** (x+1, y) — directly to the right
+- **NE** (x+1, y+1) — diagonally up-right
+
+We decide by comparing the midpoint M = (x+1, y+0.5) against the true line y = m·x + c:
+
+```
+If M is below the line → NE is closer → plot (x+1, y+1)
+If M is above the line → E is closer → plot (x+1, y)
+```
+
+**Decision Parameter Derivation:**
+- For line from (x₁,y₁) to (x₂,y₂) with 0 < m < 1:
+- f(x, y) = y − m·x − c = 0 (line equation in implicit form)
+- At midpoint (x+1, y+0.5): p = f(x+1, y+0.5) = 2·dy·(x+1) − 2·dx·(y+0.5) + 2·c·dx
+- Simplified to integer arithmetic:
+  - p₀ = 2·dy − dx
+  - If p < 0: plot E, p += 2·dy
+  - If p ≥ 0: plot NE, p += 2·(dy − dx)
+
+### Algorithm (Octant 1: 0 < m < 1)
+
+```
+INPUT: (x₁, y₁), (x₂, y₂)  where x₁ < x₂ and 0 < (y₂−y₁) < (x₂−x₁)
+OUTPUT: Set of pixel coordinates
+
+1. dx = x₂ − x₁, dy = y₂ − y₁
+2. p = 2·dy − dx
+3. x = x₁, y = y₁
+4. FOR each x from x₁ TO x₂:
+      PLOT(x, y)
+      IF p < 0:
+         p = p + 2·dy           (go EAST)
+      ELSE:
+         y = y + 1
+         p = p + 2·(dy − dx)    (go NORTH-EAST)
+```
+
+### Generalization to All 8 Octants
+
+```
+1. dx = |x₂ − x₁|, dy = |y₂ − y₁|
+2. sx = sign(x₂ − x₁), sy = sign(y₂ − y₁)     ← direction of movement
+3. IF dy > dx (steep slope):
+      SWAP dx, dy
+      swapped = True                            ← x and y axes swapped
+4. p = 2·dy − dx
+5. x = x₁, y = y₁
+6. FOR i = 0 TO dx:
+      PLOT(x, y)
+      WHILE p ≥ 0:                              ← diagonal step needed
+         IF swapped: x += sx  ELSE: y += sy
+         p = p − 2·dx
+      IF swapped: y += sy  ELSE: x += sx        ← always step on driving axis
+      p = p + 2·dy
+```
+
+### Example
+
+**Points:** A(2, 2), B(8, 5)
+
+```
+dx = 6, dy = 3
+p₀ = 2·3 − 6 = 0
+
+ x | y |  p before | action  |  p after | pixel
+───┼───┼───────────┼─────────┼──────────┼───────
+ 2 | 2 |     0     | NE, y++ | 2(3-6)=-6| (2,2)
+ 3 | 3 |    -6     | E       | -6+6=0   | (3,3)
+ 4 | 3 |     0     | NE, y++ | 2(3-6)=-6| (4,3)
+ 5 | 4 |    -6     | E       | -6+6=0   | (5,4)
+ 6 | 4 |     0     | NE, y++ | 2(3-6)=-6| (6,4)
+ 7 | 5 |    -6     | E       | -6+6=0   | (7,5)
+ 8 | 5 |     —     | done    |    —     | (8,5)
+```
+
+### Analysis
+
+| Advantage | Disadvantage |
+|-----------|-------------|
+| Only integer addition/subtraction | Slightly more complex to implement |
+| No division, no rounding | Must handle all 8 octants |
+| No accumulated error | — |
+| Fast — ideal for hardware | — |
+| Exact results | — |
 
 ### Python Code
 
@@ -285,7 +498,77 @@ if __name__ == "__main__":
 
 ### Theory
 
-Uses the implicit circle equation `f(x,y) = x² + y² - r²`. With **8-way symmetry**, only 1/8 of the circle needs to be computed. Decision parameter `p = 1 - r` determines whether to plot E or SE pixel.
+The midpoint (Bresenham's) circle algorithm uses the implicit circle equation:
+
+```
+f(x, y) = x² + y² − r² = 0
+```
+
+**Decision function:**
+- f(x, y) < 0 → point is INSIDE the circle
+- f(x, y) = 0 → point is ON the circle
+- f(x, y) > 0 → point is OUTSIDE the circle
+
+**8-Way Symmetry:**
+If (x, y) is on the circle, so are:
+```
+(±x, ±y), (±y, ±x)  →  8 points total
+```
+We only compute 1/8 of the circle (0° to 45°) and reflect.
+
+**Decision Parameter:**
+Starting at (0, r):
+- p₀ = 1 − r (integer version of 5/4 − r)
+- At each step x → x+1:
+  - If p < 0 (midpoint inside): pixel E (x+1, y), p += 2·x + 3
+  - If p ≥ 0 (midpoint on/outside): pixel SE (x+1, y−1), p += 2·(x−y) + 5
+
+### Algorithm
+
+```
+INPUT: Center (xc, yc), Radius r
+OUTPUT: Set of pixel coordinates (using 8-way symmetry)
+
+1. x = 0, y = r
+2. p = 1 − r
+3. PLOT 8 symmetric points: (±x, ±y), (±y, ±x)
+4. WHILE x < y:
+      x = x + 1
+      IF p < 0:
+         p = p + 2·x + 3          (point E)
+      ELSE:
+         y = y − 1
+         p = p + 2·(x − y) + 5    (point SE)
+      PLOT 8 symmetric points
+```
+
+### Example
+
+**Center (0, 0), r = 10**
+
+```
+p₀ = 1 − 10 = −9
+
+ x | y |  p before | action |  p after | plotted (8 symmetric)
+───┼───┼───────────┼────────┼──────────┼─────────────────────────
+ 0 |10 |     —     |  init  |    -9    | (0,10), (10,0), (0,-10), (-10,0)
+ 1 |10 |    -9     |   E    | -9+5=-4  | (±1,±10), (±10,±1)
+ 2 |10 |    -4     |   E    | -4+7=3   | (±2,±10), (±10,±2)
+ 3 |10 |     3     |  SE, y=9| 3+2(3-10)+5=-6| (±3,±10), (±10,±3)
+ 4 | 9 |    -6     |   E    | -6+11=5  | (±4,±9), (±9,±4)
+ 5 | 9 |     5     |  SE, y=8| 5+2(5-9)+5=2 | (±5,±9), (±9,±5)
+ 6 | 8 |     2     |  SE, y=7| 2+2(6-7)+5=5 | (±6,±8), (±8,±6)
+ 7 | 7 |     5     |  SE, y=6| 5+2(7-6)+5=12| (±7,±7)  ← x > y, stop
+```
+
+### Analysis
+
+| Aspect | Rating |
+|--------|--------|
+| Arithmetic | Integer only |
+| Symmetry | 8-way — 1/8th computation |
+| Speed | Very fast |
+| Accuracy | Exact for integer radii |
 
 ### Python Code
 
@@ -358,12 +641,41 @@ if __name__ == "__main__":
 
 ### Theory
 
-Translation moves every point by the same vector: `x' = x + tx, y' = y + ty`. In matrix form using homogeneous coordinates:
+Translation is the simplest geometric transformation — it **moves** every point of an object by the same distance in the same direction.
+
+**Formula:**
+```
+x' = x + tx
+y' = y + ty
+```
+
+**Matrix form (homogeneous coordinates):**
+```
+⎡ x' ⎤   ⎡ 1  0  tx ⎤ ⎡ x ⎤
+⎢ y' ⎥ = ⎢ 0  1  ty ⎥ ⎢ y ⎥
+⎣ 1  ⎦   ⎣ 0  0  1  ⎦ ⎣ 1 ⎦
+```
+
+**To translate an object:** apply the translation to EVERY vertex, then redraw the shape.
+
+**Properties:**
+- Preserves shape and size (rigid transformation)
+- Preserves orientation
+- Lines remain parallel (affine transformation)
+- Area is preserved
+
+### Algorithm
 
 ```
-| x' |   | 1 0 tx | | x |
-| y' | = | 0 1 ty | | y |
-| 1  |   | 0 0 1  | | 1 |
+INPUT: Object vertices V[], Translation vector (tx, ty)
+OUTPUT: Translated vertices V'[]
+
+FOR each vertex (x, y) in V:
+    x' = x + tx
+    y' = y + ty
+    ADD (x', y') to V'
+
+DRAW shape using V'
 ```
 
 ### Python Code
@@ -385,10 +697,8 @@ def run():
 
     # ---- Part 1: Translate a LINE ----
     ax1.set_title("2D Translation: Line")
-    ax1.set_xlim(0, 420)
-    ax1.set_ylim(0, 300)
-    ax1.set_aspect("equal")
-    ax1.grid(True, alpha=0.3)
+    ax1.set_xlim(0, 420); ax1.set_ylim(0, 300)
+    ax1.set_aspect("equal"); ax1.grid(True, alpha=0.3)
 
     lx1, ly1 = 50, 50
     lx2, ly2 = 200, 150
@@ -404,10 +714,8 @@ def run():
 
     # ---- Part 2: Translate a TRIANGLE ----
     ax2.set_title("2D Translation: Triangle")
-    ax2.set_xlim(150, 600)
-    ax2.set_ylim(0, 350)
-    ax2.set_aspect("equal")
-    ax2.grid(True, alpha=0.3)
+    ax2.set_xlim(150, 600); ax2.set_ylim(0, 350)
+    ax2.set_aspect("equal"); ax2.grid(True, alpha=0.3)
 
     x1, y1 = 300, 200
     x2, y2 = 400, 50
@@ -424,18 +732,14 @@ def run():
     ax2.annotate("Translated", (x1 + ttx, y1 + tty), xytext=(5, 8), textcoords="offset points", color="cyan", fontsize=8)
 
     for ax in [ax1, ax2]:
-        ax.set_xlabel("X")
-        ax.set_ylabel("Y")
+        ax.set_xlabel("X"); ax.set_ylabel("Y")
         ax.legend(fontsize=8, loc="lower right")
-        ax.set_facecolor("#2b2b2b")
-        ax.tick_params(colors="white")
-        ax.xaxis.label.set_color("white")
-        ax.yaxis.label.set_color("white")
+        ax.set_facecolor("#2b2b2b"); ax.tick_params(colors="white")
+        ax.xaxis.label.set_color("white"); ax.yaxis.label.set_color("white")
         ax.title.set_color("white")
 
     fig.patch.set_facecolor("#2b2b2b")
-    plt.tight_layout()
-    plt.show()
+    plt.tight_layout(); plt.show()
 
 if __name__ == "__main__":
     run()
@@ -453,11 +757,58 @@ if __name__ == "__main__":
 
 ### Theory
 
-Rotation about pivot (cx, cy) by angle θ:
+Rotation turns an object around a fixed point (pivot). Positive angle = counterclockwise.
+
+**Rotation about origin by angle θ:**
+```
+x' = x·cosθ − y·sinθ
+y' = x·sinθ + y·cosθ
+```
+
+**Derivation:**
+A point (x, y) = (r·cosφ, r·sinφ) after rotation by θ becomes:
+```
+x' = r·cos(φ+θ) = r·cosφ·cosθ − r·sinφ·sinθ = x·cosθ − y·sinθ
+y' = r·sin(φ+θ) = r·sinφ·cosθ + r·cosφ·sinθ = y·cosθ + x·sinθ
+```
+
+**Rotation about arbitrary pivot (cx, cy) — 3 steps:**
+```
+1. Translate pivot to origin:          T(−cx, −cy)
+2. Rotate about origin:                R(θ)
+3. Translate pivot back:               T(cx, cy)
+
+Combined: P' = T(cx,cy) · R(θ) · T(−cx,−cy) · P
+```
+
+In code:
+```
+x_rel = x − cx
+y_rel = y − cy
+x' = cx + x_rel·cosθ − y_rel·sinθ
+y' = cy + x_rel·sinθ + y_rel·cosθ
+```
+
+**Matrix form:**
+```
+⎡ x' ⎤   ⎡ cosθ  −sinθ  cx(1−cosθ)+cy·sinθ ⎤ ⎡ x ⎤
+⎢ y' ⎥ = ⎢ sinθ   cosθ  cy(1−cosθ)−cx·sinθ ⎥ ⎢ y ⎥
+⎣ 1  ⎦   ⎣  0      0             1          ⎦ ⎣ 1 ⎦
+```
+
+### Algorithm
 
 ```
-x' = cx + (x-cx)·cosθ - (y-cy)·sinθ
-y' = cy + (x-cx)·sinθ + (y-cy)·cosθ
+INPUT: Vertex (x, y), Pivot (cx, cy), Angle θ (degrees)
+OUTPUT: Rotated vertex (x', y')
+
+1. rad = θ × π / 180
+2. cosθ = cos(rad), sinθ = sin(rad)
+3. x_rel = x − cx
+   y_rel = y − cy
+4. x' = cx + x_rel·cosθ − y_rel·sinθ
+   y' = cy + x_rel·sinθ + y_rel·cosθ
+5. RETURN ROUND(x'), ROUND(y')
 ```
 
 ### Python Code
@@ -476,10 +827,7 @@ def rotate_point(x, y, cx, cy, angle):
     return round(cx + x_rot), round(cy + y_rot)
 
 def draw_triangle(ax, x1, y1, x2, y2, x3, y3, color, label=None):
-    tri = mpatches.Polygon(
-        [(x1, y1), (x2, y2), (x3, y3)],
-        fill=False, edgecolor=color, linewidth=2, label=label
-    )
+    tri = mpatches.Polygon([(x1, y1), (x2, y2), (x3, y3)], fill=False, edgecolor=color, linewidth=2, label=label)
     ax.add_patch(tri)
 
 def run():
@@ -508,8 +856,7 @@ def run():
     ax2.set_aspect("equal"); ax2.grid(True, alpha=0.3)
 
     x1, y1, x2, y2, x3, y3 = 400, 80, 500, 200, 300, 200
-    cx = (x1 + x2 + x3) // 3
-    cy = (y1 + y2 + y3) // 3
+    cx = (x1 + x2 + x3) // 3; cy = (y1 + y2 + y3) // 3
 
     draw_triangle(ax2, x1, y1, x2, y2, x3, y3, "white", "Original")
     ax2.scatter([cx], [cy], c="red", s=50, zorder=4)
@@ -527,8 +874,7 @@ def run():
         ax.title.set_color("white")
 
     fig.patch.set_facecolor("#2b2b2b")
-    plt.tight_layout()
-    plt.show()
+    plt.tight_layout(); plt.show()
 
 if __name__ == "__main__":
     run()
@@ -546,10 +892,53 @@ if __name__ == "__main__":
 
 ### Theory
 
-Scaling about fixed point (fx, fy): `x' = fx + (x-fx)·sx, y' = fy + (y-fy)·sy`
+Scaling changes the **size** of an object. The coordinates are multiplied by scaling factors.
 
-- Uniform scaling: sx = sy (preserves proportions)
-- Differential scaling: sx ≠ sy (distorts shape)
+**Scaling about origin:**
+```
+x' = x × sx
+y' = y × sy
+```
+
+**Scaling about fixed point (fx, fy) — 3 steps:**
+```
+1. Translate fixed point to origin:  T(−fx, −fy)
+2. Scale about origin:               S(sx, sy)
+3. Translate back:                    T(fx, fy)
+
+Combined: P' = T(fx,fy) · S(sx,sy) · T(−fx,−fy) · P
+```
+
+In code:
+```
+x' = fx + (x − fx) × sx
+y' = fy + (y − fy) × sy
+```
+
+**Matrix form:**
+```
+⎡ x' ⎤   ⎡ sx  0   fx(1−sx) ⎤ ⎡ x ⎤
+⎢ y' ⎥ = ⎢ 0   sy  fy(1−sy) ⎥ ⎢ y ⎥
+⎣ 1  ⎦   ⎣ 0   0      1     ⎦ ⎣ 1 ⎦
+```
+
+**Uniform vs Differential Scaling:**
+
+| Type | Condition | Effect |
+|------|-----------|--------|
+| Uniform | sx = sy | Object keeps proportions |
+| Differential | sx ≠ sy | Object stretches/distorts |
+
+### Algorithm
+
+```
+INPUT: Vertex (x, y), Fixed point (fx, fy), Scaling factors (sx, sy)
+OUTPUT: Scaled vertex (x', y')
+
+x' = fx + (x − fx) × sx
+y' = fy + (y − fy) × sy
+RETURN ROUND(x'), ROUND(y')
+```
 
 ### Python Code
 
@@ -611,8 +1000,7 @@ def run():
         ax.title.set_color("white")
 
     fig.patch.set_facecolor("#2b2b2b")
-    plt.tight_layout()
-    plt.show()
+    plt.tight_layout(); plt.show()
 
 if __name__ == "__main__":
     run()
@@ -630,10 +1018,34 @@ if __name__ == "__main__":
 
 ### Theory
 
-Rodrigues' rotation formula rotates a point `v` about a unit axis `u` by angle θ:
+Rotating a 3D object about any line in space (not aligned with x, y, or z axis).
+
+**Rodrigues' Rotation Formula:**
+Given a point vector `v` and a unit axis vector `u`, rotation by angle θ:
 
 ```
-v' = v·cosθ + (u × v)·sinθ + u·(u·v)·(1 - cosθ)
+v' = v·cosθ + (u × v)·sinθ + u·(u·v)·(1 − cosθ)
+```
+
+| Component | Meaning |
+|-----------|---------|
+| v·cosθ | Original vector scaled down |
+| u × v | Perpendicular component (rotation plane) |
+| u·(u·v) | Parallel component (along axis, unchanged) |
+
+**Step-by-step process:**
+```
+1. Translate so axis passes through origin:  v = P − A₁
+2. Normalize axis to unit vector:            u = (A₂ − A₁) / |A₂ − A₁|
+3. Apply Rodrigues' formula
+4. Translate back:                           P' = v' + A₁
+```
+
+**Projection (3D → 2D):**
+Oblique projection at 30°:
+```
+screen_x = world_x + world_z × 0.5 × cos(30°)
+screen_y = world_y + world_z × 0.5 × sin(30°)
 ```
 
 ### Python Code
@@ -695,8 +1107,7 @@ def run():
     ax.xaxis.label.set_color("white"); ax.yaxis.label.set_color("white")
     ax.zaxis.label.set_color("white"); ax.title.set_color("white")
     ax.tick_params(colors="white")
-    plt.tight_layout()
-    plt.show()
+    plt.tight_layout(); plt.show()
 
 if __name__ == "__main__":
     run()
@@ -714,17 +1125,42 @@ if __name__ == "__main__":
 
 ### Theory
 
-Each endpoint gets a 4-bit region code (LEFT, RIGHT, BOTTOM, TOP).  
-- **Trivial accept:** both codes = 0000  
-- **Trivial reject:** codes AND ≠ 0 (both on same outside side)  
-- **Otherwise:** clip against one edge, repeat.
+Clips a line against a rectangular window. Each endpoint gets a **4-bit region code** telling where it lies relative to the window.
 
+**Region Code Bits:**
+```
+Bit 3 (8) = TOP     → y < yMin
+Bit 2 (4) = BOTTOM  → y > yMax
+Bit 1 (2) = RIGHT   → x > xMax
+Bit 0 (1) = LEFT    → x < xMin
+```
+
+**Region Layout:**
 ```
      1001 | 1000 | 1010
     ──────┼──────┼──────
      0001 | 0000 | 0010
     ──────┼──────┼──────
      0101 | 0100 | 0110
+```
+
+**Algorithm:**
+```
+1. Compute codes for both endpoints (code1, code2)
+2. IF code1 == 0 AND code2 == 0:
+       TRIVIAL ACCEPT — line fully inside, draw it
+3. ELSE IF code1 & code2 ≠ 0:
+       TRIVIAL REJECT — both on same outside side, discard
+4. ELSE:
+       Pick outside endpoint
+       Clip against the corresponding edge:
+         TOP:    x = x₁ + (x₂−x₁)·(yMin−y₁)/(y₂−y₁), y = yMin
+         BOTTOM: x = x₁ + (x₂−x₁)·(yMax−y₁)/(y₂−y₁), y = yMax
+         LEFT:   y = y₁ + (y₂−y₁)·(xMin−x₁)/(x₂−x₁), x = xMin
+         RIGHT:  y = y₁ + (y₂−y₁)·(xMax−x₁)/(x₂−x₁), x = xMax
+       Replace outside endpoint with intersection
+       Recompute code
+       Go to step 2
 ```
 
 ### Python Code
@@ -809,14 +1245,43 @@ if __name__ == "__main__":
 
 ### Theory
 
-Clip polygon sequentially against left, right, bottom, and top edges. For each edge, process vertex pairs (S → P):
+Clips a polygon against each edge of a rectangular window **sequentially**. The output of one clipping stage becomes the input for the next.
+
+**Clipping order:**
+```
+1. Clip against LEFT edge   (x = xMin)
+2. Clip against RIGHT edge  (x = xMax)
+3. Clip against BOTTOM edge (y = yMax)
+4. Clip against TOP edge    (y = yMin)
+```
+
+**Four cases for each vertex pair (S → P):**
+
+```
+       Inside │
+      ┌───────┤
+      │ ①  ② │  ← S inside, P inside/outside
+      │ ③  ④ │  ← S outside, P inside/outside
+      └───────┤
+      Outside │
+```
 
 | Case | S inside | P inside | Output |
 |------|----------|----------|--------|
-| 1 | ✓ | ✓ | P |
-| 2 | ✓ | ✗ | Intersection I |
-| 3 | ✗ | ✗ | Nothing |
-| 4 | ✗ | ✓ | I, then P |
+| 1 | ✓ | ✓ | Add P |
+| 2 | ✓ | ✗ | Add intersection I |
+| 3 | ✗ | ✗ | Add nothing |
+| 4 | ✗ | ✓ | Add I, then add P |
+
+**Edge-intersection formulas:**
+```
+Left   (x = xMin):  y = y₁ + m·(xMin − x₁)
+Right  (x = xMax):  y = y₁ + m·(xMax − x₁)
+Top    (y = yMin):  x = x₁ + (yMin − y₁) / m
+Bottom (y = yMax):  x = x₁ + (yMax − y₁) / m
+
+where m = (y₂ − y₁) / (x₂ − x₁)
+```
 
 ### Python Code
 
@@ -910,10 +1375,46 @@ if __name__ == "__main__":
 
 ### Theory
 
-Cubic Bezier curve (4 control points, 0 ≤ t ≤ 1):
+A Bezier curve uses **control points** to define a smooth curve. The curve passes through the first and last points but only approaches the intermediate ones.
+
+**Cubic Bezier (4 control points):**
 
 ```
-B(t) = (1-t)³·P₀ + 3t(1-t)²·P₁ + 3t²(1-t)·P₂ + t³·P₃
+B(t) = (1−t)³·P₀ + 3t(1−t)²·P₁ + 3t²(1−t)·P₂ + t³·P₃
+```
+
+For 0 ≤ t ≤ 1:
+- t = 0 → curve starts at P₀
+- t = 1 → curve ends at P₃
+- Intermediate t values give points "pulled" toward P₁ and P₂
+
+**Bernstein Basis Polynomials:**
+```
+B₀(t) = (1−t)³      ← weight for P₀
+B₁(t) = 3t(1−t)²    ← weight for P₁
+B₂(t) = 3t²(1−t)    ← weight for P₂
+B₃(t) = t³           ← weight for P₃
+```
+
+At each t, B(t) = Σ Pᵢ × Bᵢ(t), so the curve is a **weighted average** of all control points.
+
+**Properties:**
+| Property | Description |
+|----------|-------------|
+| Convex hull | Curve lies inside the convex hull of control points |
+| Endpoint interpolation | Passes through P₀ (t=0) and P₃ (t=1) |
+| Tangent at start | Direction P₀ → P₁ |
+| Tangent at end | Direction P₂ → P₃ |
+| Global control | Moving one point changes the **entire** curve |
+| Affine invariance | Transform control points = transform the curve |
+
+**de Casteljau's Algorithm (alternative):**
+```
+Recursively split line segments at parameter t:
+1. Connect adjacent control points with lines
+2. Find points at t on each line
+3. Connect those points
+4. Repeat until one point remains → that's B(t)
 ```
 
 ### Python Code
@@ -982,7 +1483,51 @@ if __name__ == "__main__":
 
 ### Theory
 
-Uniform cubic B-spline — each segment uses 4 control points. Local control: moving one point affects at most 4 segments. C² continuous.
+B-Spline (Basis Spline) improves on Bezier by providing **local control** — moving one control point affects only a small region of the curve, not the entire curve.
+
+**Uniform Cubic B-Spline:**
+
+Each segment uses 4 control points (Pᵢ, Pᵢ₊₁, Pᵢ₊₂, Pᵢ₊₃):
+
+```
+Bᵢ(t) = (1/6) × [
+    (1−t)³·Pᵢ +
+    (3t³ − 6t² + 4)·Pᵢ₊₁ +
+    (−3t³ + 3t² + 3t + 1)·Pᵢ₊₂ +
+    t³·Pᵢ₊₃
+]
+```
+
+**Matrix form:**
+```
+Bᵢ(t) = [t³ t² t 1] · (1/6) · M · [Pᵢ Pᵢ₊₁ Pᵢ₊₂ Pᵢ₊₃]ᵀ
+
+       [-1  3 -3  1]
+M =    [ 3 -6  3  0]
+       [-3  0  3  0]
+       [ 1  4  1  0]
+```
+
+**Key Properties:**
+| Property | Description |
+|----------|-------------|
+| Local control | Moving Pᵢ affects at most 4 segments |
+| Continuity | C² continuous (2nd derivative matches at joins) |
+| Endpoints | Does NOT pass through endpoints (unless clamped) |
+| Smoothness | Smoother than Bezier at join points |
+
+**Comparison: Bezier vs B-Spline:**
+
+| Property | Bezier | B-Spline |
+|----------|--------|----------|
+| Control points | n+1 for degree n | n+1 points, any degree k |
+| Control type | Global | Local |
+| Endpoint interpolation | Yes | No (unless clamped) |
+| Continuity at joins | C⁰ or C¹ | C² |
+| Complexity | Simpler | More complex |
+
+**Knot Vector:**
+Controls the influence range of each control point. For uniform B-spline, knots are evenly spaced: [0, 1, 2, ..., n+4].
 
 ### Python Code
 
@@ -1071,3 +1616,22 @@ if __name__ == "__main__":
 | `render_all.py` | Regenerate all screenshot images with window frames |
 | `frame_screenshot.py` | Add Windows-style window frame to images |
 | `include/` | WinBGIm graphics library (headers + lib) |
+
+---
+
+## Quick Reference: Formulas
+
+| Experiment | Key Formula |
+|------------|-------------|
+| Slope-Intercept | y = m·x + c |
+| DDA | x += dx/steps, y += dy/steps |
+| Bresenham | p = 2·dy − dx, if p < 0: E else: NE |
+| Midpoint Circle | p = 1 − r, if p < 0: E else: SE |
+| Translation | x' = x + tx, y' = y + ty |
+| Rotation | x' = x·cosθ − y·sinθ, y' = x·sinθ + y·cosθ |
+| Scaling | x' = x·sx, y' = y·sy |
+| 3D Rotation | v' = v·cosθ + (u×v)·sinθ + u·(u·v)·(1−cosθ) |
+| Cohen-Sutherland | 4-bit region codes + edge intersection |
+| Sutherland-Hodgman | 4 cases per edge: both in/in→out/out→in/both out |
+| Bezier | B(t) = Σ Pᵢ·Bᵢ(t) with Bernstein polynomials |
+| B-Spline | Bᵢ(t) = (1/6)·[...] with local cubic basis |
