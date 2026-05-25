@@ -83,14 +83,11 @@ void midpointCircle(int xc, int yc, int r) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "Midpoint Circle Algorithm");
 
-    // Draw concentric circles (same center, different radii)
-    // This shows the algorithm works for various sizes
-    midpointCircle(300, 200, 50);   // Small circle (r=50)
-    midpointCircle(300, 200, 100);  // Medium circle (r=100)
-    midpointCircle(300, 200, 150);  // Large circle (r=150)
+    midpointCircle(300, 200, 50);
+    midpointCircle(300, 200, 100);
+    midpointCircle(300, 200, 150);
 
     outtextxy(10, 10, "Midpoint Circle Algorithm (Bresenham's Circle)");
     outtextxy(10, 30, "Concentric circles: r = 50, 100, 150");

@@ -43,6 +43,7 @@ $gppArgs = @(
     $srcPath,
     "-I", $includeDir,
     "-L", $includeDir,
+    "-static-libgcc", "-static-libstdc++",
     "-lbgi", "-lgdi32", "-lcomdlg32", "-luuid", "-loleaut32", "-lole32"
 )
 $result = & "g++" $gppArgs 2>&1

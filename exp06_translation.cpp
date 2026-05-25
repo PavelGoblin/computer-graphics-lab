@@ -48,8 +48,7 @@ void drawLine(int x1, int y1, int x2, int y2, int color) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "2D Translation Transformation");
 
     // ================================================================
     // PART 1: Translate a LINE

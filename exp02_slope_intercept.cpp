@@ -1,110 +1,137 @@
-// ===================================================================
-// Experiment 02: Line using Slope-Intercept Formula
-// Formula: y = mx + c
-//
-// THEORY:
-// Any straight line can be written as:  y = m*x + c
-//   - m = slope = (y2 - y1) / (x2 - x1)
-//   - c = y-intercept = y1 - m*x1
-//
-// STEPS:
-// 1. Take two endpoints (x1,y1) and (x2,y2)
-// 2. Calculate slope m
-// 3. Calculate intercept c
-// 4. Loop through x from x1 to x2 (or y if line is steep)
-// 5. At each step: compute y = m*x + c and plot pixel
-//
-// LIMITATIONS:
-// - Uses floating point (slow on old hardware)
-// - Vertical lines have infinite slope (special case needed)
-// - Rounding errors accumulate on long lines
-// ===================================================================
+#include <graphics.h>
+#include <cmath>
+#include <conio.h>
+#include <cstdio>
 
-#include <graphics.h>    // WinBGIm graphics library
-#include <cmath>         // For abs() function
-#include <conio.h>       // For getch() to wait for keypress
-
-// Function: Draw a line using y = mx + c formula
-// Parameters: (x1,y1) = start point, (x2,y2) = end point
 void slopeInterceptLine(int x1, int y1, int x2, int y2) {
-    // Step 1: Calculate differences between endpoints
-    int dx = x2 - x1;   // Horizontal distance
-    int dy = y2 - y1;   // Vertical distance
+    int dx = x2 - x1;
+    int dy = y2 - y1;
 
-    // Step 2: Handle special case - VERTICAL LINE
-    // When dx = 0, the slope is infinite (can't divide by zero)
     if (dx == 0) {
-        // Just iterate y from y1 to y2, keeping x constant
-        int yStart = (y1 < y2) ? y1 : y2;    // Start at smaller y
-        int yEnd   = (y1 < y2) ? y2 : y1;    // End at larger y
-        for (int y = yStart; y <= yEnd; y++) {
-            putpixel(x1, y, WHITE);           // Plot the pixel (fixed x)
-        }
-        return;   // Done with vertical line
+        int yStart = (y1 < y2) ? y1 : y2;
+        int yEnd   = (y1 < y2) ? y2 : y1;
+        for (int y = yStart; y <= yEnd; y++)
+            putpixel(x1, y, WHITE);
+        return;
     }
 
-    // Step 3: Calculate slope (m) and y-intercept (c)
-    float m = (float)dy / (float)dx;    // Slope = rise / run
-    float c = y1 - m * x1;              // y-intercept
-
-    // Step 4: Decide which axis to drive along
-    // We iterate along the axis with LARGER distance
-    // This prevents gaps in the line
+    float m = (float)dy / (float)dx;
+    float c = y1 - m * x1;
 
     if (abs(dx) >= abs(dy)) {
-        // Case A: Line is more horizontal (drive along x-axis)
-        // Go from smaller x to larger x
         int xStart = (x1 < x2) ? x1 : x2;
         int xEnd   = (x1 < x2) ? x2 : x1;
-
         for (int x = xStart; x <= xEnd; x++) {
-            // For each x, calculate y = mx + c
             float yExact = m * x + c;
-            int yPixel = (int)(yExact + 0.5f);  // Round to nearest pixel
+            int yPixel = (int)(yExact + 0.5f);
             putpixel(x, yPixel, WHITE);
         }
     } else {
-        // Case B: Line is more vertical (drive along y-axis)
-        // Go from smaller y to larger y
         int yStart = (y1 < y2) ? y1 : y2;
         int yEnd   = (y1 < y2) ? y2 : y1;
-
         for (int y = yStart; y <= yEnd; y++) {
-            // For each y, calculate x = (y - c) / m
             float xExact = (y - c) / m;
-            int xPixel = (int)(xExact + 0.5f);  // Round to nearest pixel
+            int xPixel = (int)(xExact + 0.5f);
             putpixel(xPixel, y, WHITE);
         }
     }
 }
 
-// ===================================================================
-// MAIN FUNCTION
-// ===================================================================
+void drawAxes() {
+    int w = getmaxx();
+    int h = getmaxy();
+    int ox = 50, oy = h - 50;
+
+    setcolor(LIGHTGRAY);
+    setlinestyle(SOLID_LINE, 0, NORM_WIDTH);
+
+    // X-axis
+    line(ox, oy, w - 20, oy);
+    line(w - 20, oy, w - 30, oy - 5);
+    line(w - 20, oy, w - 30, oy + 5);
+    outtextxy(w - 30, oy + 8, "X");
+
+    // Y-axis
+    line(ox, oy, ox, 20);
+    line(ox, 20, ox - 5, 30);
+    line(ox, 20, ox + 5, 30);
+    outtextxy(ox - 10, 10, "Y");
+
+    // Origin
+    outtextxy(ox - 20, oy + 5, "O");
+
+    // Tick marks
+    setcolor(DARKGRAY);
+    for (int i = 1; i <= 10; i++) {
+        int x = ox + i * 50;
+        int y = oy - i * 50;
+        if (x <= w - 20) {
+            line(x, oy - 3, x, oy + 3);
+            char buf[10];
+            sprintf(buf, "%d", i * 50);
+            outtextxy(x - 8, oy + 6, buf);
+        }
+        if (y >= 20) {
+            line(ox - 3, y, ox + 3, y);
+            char buf[10];
+            sprintf(buf, "%d", i * 50);
+            outtextxy(ox - 35, y - 5, buf);
+        }
+    }
+}
+
 int main() {
-    // Step 1: Initialize graphics mode
-    // gd = DETECT means "autodetect the best graphics driver"
-    // gm will be set by initgraph
-    // "" = empty path works with WinBGIm (no BGI files needed)
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "Slope-Intercept: y = mx + c");
 
-    // Step 2: Draw a line using our slope-intercept function
-    // This draws from (100, 100) to (400, 300)
-    int x1 = 100, y1 = 100;   // Start point
-    int x2 = 400, y2 = 300;   // End point
-    slopeInterceptLine(x1, y1, x2, y2);
+    drawAxes();
 
-    // Step 3: Mark the endpoints with RED pixels
-    putpixel(x1, y1, RED);
-    putpixel(x2, y2, RED);
+    int ox = 50, oy = getmaxy() - 50;
+    int x1 = 100, y1 = 100;
+    int x2 = 400, y2 = 300;
 
-    // Step 4: Show a label on screen
-    outtextxy(10, 10, "Line using Slope-Intercept Formula (y = mx + c)");
-    outtextxy(10, 30, "Red dots = endpoints | White pixels = the line");
+    int px1 = ox + x1, py1 = oy - y1;
+    int px2 = ox + x2, py2 = oy - y2;
 
-    // Step 5: Wait for keypress then close
-    getch();          // Wait for user to press any key
-    closegraph();     // Close the graphics window
-    return 0;         // Exit program
+    setcolor(YELLOW);
+    slopeInterceptLine(px1, py1, px2, py2);
+
+    setcolor(RED);
+    circle(px1, py1, 4);
+    circle(px2, py2, 4);
+    setfillstyle(SOLID_FILL, RED);
+    floodfill(px1, py1, RED);
+    floodfill(px2, py2, RED);
+
+    setcolor(LIGHTRED);
+    char buf[64];
+    sprintf(buf, "A(%d,%d)", x1, y1);
+    outtextxy(px1 + 8, py1 - 10, buf);
+    sprintf(buf, "B(%d,%d)", x2, y2);
+    outtextxy(px2 + 8, py2 - 10, buf);
+
+    int dx = x2 - x1, dy = y2 - y1;
+    float m = (float)dy / (float)dx;
+    float c = y1 - m * x1;
+
+    setcolor(LIGHTGREEN);
+    sprintf(buf, "dx = %d   dy = %d", dx, dy);
+    outtextxy(10, 10, buf);
+    sprintf(buf, "m = dy/dx = %d/%d = %.2f", dy, dx, m);
+    outtextxy(10, 30, buf);
+    sprintf(buf, "c = y1 - m*x1 = %d - (%.2f)*%d = %.2f", y1, m, x1, c);
+    outtextxy(10, 50, buf);
+    sprintf(buf, "Equation: y = %.2fx + %.2f", m, c);
+    outtextxy(10, 70, buf);
+
+    sprintf(buf, "At x = %d, y = %.2f*%d + %.2f = %.0f", x1, m, x1, c, m * x1 + c);
+    outtextxy(10, 95, buf);
+    sprintf(buf, "At x = %d, y = %.2f*%d + %.2f = %.0f", x2, m, x2, c, m * x2 + c);
+    outtextxy(10, 115, buf);
+
+    setcolor(WHITE);
+    outtextxy(10, getmaxy() - 20, "Press any key to exit...");
+
+    getch();
+    closegraph();
+    return 0;
 }

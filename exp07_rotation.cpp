@@ -77,8 +77,7 @@ void rotatePoint(int x, int y, int cx, int cy, float angle, int &xOut, int &yOut
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "2D Rotation Transformation");
 
     // ================================================================
     // PART 1: Rotate a LINE about its start point

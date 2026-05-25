@@ -151,8 +151,7 @@ void drawPolygon(vector<Point> poly, int color) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "Sutherland-Hodgman Polygon Clipping");
 
     // Step 1: Draw clipping window
     setcolor(WHITE);

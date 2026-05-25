@@ -92,8 +92,7 @@ void drawControlPolygon(int x[4], int y[4]) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "Bezier Curve");
 
     // ================================================================
     // CURVE 1: A simple "S" shape

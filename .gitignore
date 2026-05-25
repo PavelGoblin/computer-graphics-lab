@@ -20,6 +20,9 @@
 bin/
 obj/
 
+# User files
+cb/
+
 # OS files
 Thumbs.db
 .DS_Store

@@ -96,8 +96,7 @@ void bSpline(int controlX[], int controlY[], int n, int steps = 50) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "B-Spline Curve");
 
     // Define 6 control points for the B-Spline
     int x[NUM_POINTS] = {100, 180, 280, 380, 480, 560};

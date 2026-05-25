@@ -96,22 +96,18 @@ void bresenhamLine(int x1, int y1, int x2, int y2) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "Bresenham Line Algorithm");
 
-    // Test: Draw lines radiating from center in ALL 8 octants
-    // This proves our algorithm works in every direction
-    int cx = 300, cy = 200;   // Center point
+    int cx = 300, cy = 200;
 
-    // Lines at different angles (all 8 octants)
-    bresenhamLine(cx, cy, cx + 150, cy);       // East (0 deg)
-    bresenhamLine(cx, cy, cx + 100, cy - 80);  // NE (1st octant)
-    bresenhamLine(cx, cy, cx, cy - 150);       // North (90 deg)
-    bresenhamLine(cx, cy, cx - 100, cy - 80);  // NW
-    bresenhamLine(cx, cy, cx - 150, cy);       // West (180 deg)
-    bresenhamLine(cx, cy, cx - 100, cy + 80);  // SW
-    bresenhamLine(cx, cy, cx, cy + 150);       // South (270 deg)
-    bresenhamLine(cx, cy, cx + 100, cy + 80);  // SE
+    bresenhamLine(cx, cy, cx + 150, cy);
+    bresenhamLine(cx, cy, cx + 100, cy - 80);
+    bresenhamLine(cx, cy, cx, cy - 150);
+    bresenhamLine(cx, cy, cx - 100, cy - 80);
+    bresenhamLine(cx, cy, cx - 150, cy);
+    bresenhamLine(cx, cy, cx - 100, cy + 80);
+    bresenhamLine(cx, cy, cx, cy + 150);
+    bresenhamLine(cx, cy, cx + 100, cy + 80);
 
     outtextxy(10, 10, "Bresenham's Line Algorithm (Integer Arithmetic)");
     outtextxy(10, 30, "Lines in all 8 octants from center (300, 200)");

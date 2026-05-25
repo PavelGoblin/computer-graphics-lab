@@ -66,8 +66,7 @@ void scalePoint(int x, int y, int fx, int fy, float sx, float sy, int &xOut, int
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "2D Scaling Transformation");
 
     // ================================================================
     // PART 1: Scale a RECTANGLE

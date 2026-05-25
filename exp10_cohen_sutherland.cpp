@@ -136,8 +136,7 @@ void cohenSutherlandClip(int x1, int y1, int x2, int y2) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "Cohen-Sutherland Line Clipping");
 
     // Step 1: Draw the clipping window boundary
     setcolor(WHITE);

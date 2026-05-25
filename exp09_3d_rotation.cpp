@@ -125,8 +125,7 @@ void rotateAboutAxis(Point3D &p, Point3D a1, Point3D a2, float angle) {
 // MAIN FUNCTION
 // ===================================================================
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
+    initwindow(640, 480, "3D Rotation About Arbitrary Axis");
 
     // Define a cube centered at (300, 200, 0)
     // Front face (z = -50), Back face (z = +50)
