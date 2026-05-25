@@ -55,7 +55,7 @@ def run():
         pixels = bresenham_line(x1, y1, x2, y2)
         all_pixels.extend(pixels)
         xs, ys = zip(*pixels)
-        ax.scatter(xs, ys, c=colors[i % len(colors)], s=20, zorder=3)
+        ax.scatter(xs, ys, color=colors[i % len(colors)], s=20, zorder=3)
 
     ax.scatter([cx], [cy], c="red", s=100, zorder=4, marker="o")
     ax.annotate(f"Center ({cx},{cy})", (cx, cy),
